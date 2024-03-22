@@ -1,4 +1,4 @@
-# Adding Passkey Login to React and express app with Hanko
+# Adding Passkey Login to React and Express app with Hanko
 
 This repo shows how you can add passkey login with Hanko Passkey API to your React-express app.
 

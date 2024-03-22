@@ -17,14 +17,35 @@ PASSKEYS_API_KEY=your-hanko-passkey-api-key
 PASSKEYS_TENANT_ID=your-hanko-passkey-tenant-id
 ```
 
-## Install dependencies
+## Install Dependencies
+
+To run up your project, you need to install dependencies for both the frontend and the backend. This project uses `pnpm` as the package manager.
+
+### Frontend
+
+1. Navigate to the frontend directory:
+
+```bash
+cd react-frontend
+```
+
+1. Install the frontend dependencies:
 
 ```bash
 pnpm install
 ```
 
-## Run the project
+### Backend
+
+1. Navigate to the backend directory:
 
 ```bash
-pnpm run dev
+cd express-backend
 ```
+
+2. Install the backend dependencies:
+
+```bash
+pnpm install
+```
+

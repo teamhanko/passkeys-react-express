@@ -19,7 +19,7 @@ PASSKEYS_TENANT_ID=your-hanko-passkey-tenant-id
 
 ## Install Dependencies
 
-To run up your project, you need to install dependencies for both the frontend and the backend. This project uses `pnpm` as the package manager.
+To run your project, you need to install dependencies for both the frontend and the backend. This project uses `pnpm` as the package manager.
 
 ### Frontend
 
@@ -29,10 +29,16 @@ To run up your project, you need to install dependencies for both the frontend a
 cd react-frontend
 ```
 
-1. Install the frontend dependencies:
+2. Install the frontend dependencies:
 
 ```bash
 pnpm install
+```
+
+3. Run the frontend
+
+```bash
+pnpm run dev
 ```
 
 ### Backend
@@ -47,5 +53,11 @@ cd express-backend
 
 ```bash
 pnpm install
+```
+
+3. Run the backend
+
+```bash
+pnpm run dev
 ```
 

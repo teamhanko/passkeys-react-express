@@ -1,7 +1,21 @@
 import { v4 as uuidv4 } from "uuid";
 
-import { setUser, clearUserSession } from "../service/auth.js";
+import { setUser, clearUserSession, setUserTempSession } from "../service/auth.js";
 import db from "../db.js";
+
+// async function handleUserLogin(req, res) {
+//   const { email, password } = req.body;
+//   const user = db.users.find((user) => user.email === email);
+//   if (!user || user.password !== password) {
+//     return res.status(401).json({ message: "Invalid username or password" });
+//   }
+//   const sessionId = uuidv4();
+//   setUser(sessionId, user);
+//   console.log(sessionId);
+//   res.cookie("sessionId", sessionId);
+//   return res.status(200).json({ message: "Login successful" });
+// }
+
 
 async function handleUserLogin(req, res) {
   const { email, password } = req.body;
@@ -9,11 +23,22 @@ async function handleUserLogin(req, res) {
   if (!user || user.password !== password) {
     return res.status(401).json({ message: "Invalid username or password" });
   }
-  const sessionId = uuidv4();
-  setUser(sessionId, user);
-  console.log(sessionId);
-  res.cookie("sessionId", sessionId);
-  return res.status(200).json({ message: "Login successful" });
+
+  if (user.mfaEnabled) {
+    // User has MFA enabled. Don't set the final session ID yet, but require a call to an MFA endpoint to complete the login.
+    const tempSessionId = uuidv4(); // Generate a temporary session ID
+    setUserTempSession(tempSessionId, user); // You might want to mark this session as incomplete/pending MFA
+    console.log("User authenticated with username+password, but still requires MFA to log in:", user.email);
+    res.cookie("tempSessionId", tempSessionId, { httpOnly: true });
+    return res.status(200).json({ message: "MFA required", mfaRequired: true });
+  } else {
+    // No MFA, proceed as usual
+    const sessionId = uuidv4();
+    setUser(sessionId, user);
+    console.log(sessionId);
+    res.cookie("sessionId", sessionId, { httpOnly: true });
+    return res.status(200).json({ message: "Login successful" });
+  }
 }
 
 async function handleUserLogout(req, res) {

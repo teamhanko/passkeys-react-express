@@ -51,13 +51,17 @@ async function startServerPasskeyLogin() {
 
 async function startMfaLogin(userID) {
   const user = db.users.find((user) => user.id === userID);
-
-  const options = await passkeyApi.user(user.id).mfa.login.initialize();
+  console.log("startMfaLoginService", userID);
+  const options = await passkeyApi.user(user.id).mfa.login.initialize({
+    userId: user.id,
+  });
+  console.log("start-finishMfaLoginService", options);
   return options;
 }
 
 async function finishMfaLogin(userID, options) {
   const user = db.users.find((user) => user.id === userID);
+  console.log("finishMfaLoginService", userID);
   const response = await passkeyApi.user(user.id).mfa.login.finalize(options);
   return response;
 }

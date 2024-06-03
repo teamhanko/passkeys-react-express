@@ -42,7 +42,7 @@ async function handlePasskeyRegister(req, res) {
 async function handleMfaRegister(req, res) {
   const { user } = req;
   const userID = user.id;
-  console.log("userIDfromMFA", userID);
+  // console.log("userIDfromMFA", userID);
 
   if (!userID) {
     return res.status(401).json({ message: "Unauthorized" });
@@ -59,6 +59,9 @@ async function handleMfaRegister(req, res) {
     }
     if (finish) {
       await finishMfaRegistration(userID, credential);
+      const user = db.users.find((user) => user.id === userID);
+      user.mfaEnabled = true;
+      console.log("MfaEnabledForUser", user);
       return res.json({ message: "Registered MFA" });
     }
   } catch (error) {
@@ -98,8 +101,9 @@ async function handlePasskeyLogin(req, res) {
 
 async function handleMfaLogin(req, res) {
   const { user } = req;
+  console.log("userForMfaLogin", user);
   const userID = user.id;
-  console.log("userIDfromMFA", userID);
+  console.log("userIDfromMFALogin", userID);
 
   if (!userID) {
     return res.status(401).json({ message: "MFA Login not allowed" });
@@ -109,13 +113,14 @@ async function handleMfaLogin(req, res) {
   try {
     if (start) {
       const loginOptions = await startMfaLogin(userID);
+      console.log("MFA LOGIN START", loginOptions);
       return res.json({ loginOptions });
     }
     if (finish) {
       const jwtToken = await finishMfaLogin(userID, options);
-      const userID = await getUserID(jwtToken?.token ?? "");
-      console.log("userID from hanko", userID);
-      const user = db.users.find((user) => user.id === userID);
+      const newUserID = await getUserID(jwtToken?.token ?? "");
+      console.log("userID from hanko", newUserID);
+      const user = db.users.find((user) => user.id === newUserID);
       if (!user) {
         return res.status(401).json({ message: "Invalid user" });
       }

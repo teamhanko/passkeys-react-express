@@ -20,6 +20,26 @@ async function startServerPasskeyRegistration(userID) {
   return createOptions;
 }
 
+async function startMfaRegistration(userID) {
+  const user = db.users.find((user) => user.id === userID);
+
+  console.log("startMFARegistrationService", user);
+  const createOptions = await passkeyApi
+    .user(user.id)
+    .mfa.registration.initialize({
+      userId: user.id,
+      username: user.email || "",
+    });
+  console.log("createOptions", createOptions);
+
+  return createOptions;
+}
+
+async function finishMfaRegistration(userID, credential) {
+  const user = db.users.find((user) => user.id === userID);
+  await passkeyApi.user(user.id).mfa.registration.finalize(credential);
+}
+
 async function finishServerPasskeyRegistration(credential) {
   await passkeyApi.registration.finalize(credential);
 }
@@ -27,6 +47,19 @@ async function finishServerPasskeyRegistration(credential) {
 async function startServerPasskeyLogin() {
   const options = await passkeyApi.login.initialize();
   return options;
+}
+
+async function startMfaLogin(userID) {
+  const user = db.users.find((user) => user.id === userID);
+
+  const options = await passkeyApi.user(user.id).mfa.login.initialize();
+  return options;
+}
+
+async function finishMfaLogin(userID, options) {
+  const user = db.users.find((user) => user.id === userID);
+  const response = await passkeyApi.user(user.id).mfa.login.finalize(options);
+  return response;
 }
 
 async function finishServerPasskeyLogin(options) {
@@ -39,4 +72,8 @@ export {
   finishServerPasskeyRegistration,
   startServerPasskeyLogin,
   finishServerPasskeyLogin,
+  startMfaRegistration,
+  finishMfaRegistration,
+  startMfaLogin,
+  finishMfaLogin,
 };

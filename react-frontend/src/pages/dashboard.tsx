@@ -59,6 +59,36 @@ const Dashboard = () => {
             return;
         }
     }
+
+    async function registerMfaPasskey() {
+        const createOptionsResponse = await fetch("http://localhost:5001/api/passkeys/mfa/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: 'include',
+            body: JSON.stringify({ start: true, finish: false, credential: null }),
+        });
+
+        const { createOptions } = await createOptionsResponse.json();
+        console.log("createOptions", createOptions)
+
+        const credential = await create(
+            createOptions as CredentialCreationOptionsJSON,
+        );
+        console.log(credential)
+
+        const response = await fetch("http://localhost:5001/api/passkeys/mfa/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ start: false, finish: true, credential }),
+        });
+        console.log(response)
+
+        if (response.ok) {
+            toast.success("Registered MFA passkey successfully!");
+            return;
+        }
+    }
     return (
         <div className="p-4">
             <h1>Dashboard</h1>
@@ -69,6 +99,14 @@ const Dashboard = () => {
                     className="flex justify-center items-center space-x-2 mt-8"
                 >
                     Register a new passkey
+                </Button>
+            </div>
+            <div>
+                <Button
+                    onClick={() => registerMfaPasskey()}
+                    className="flex justify-center items-center space-x-2 mt-8"
+                >
+                    Enable MFA
                 </Button>
             </div>
         </div>

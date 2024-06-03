@@ -25,9 +25,8 @@ async function handleUserLogin(req, res) {
   }
 
   if (user.mfaEnabled) {
-    // User has MFA enabled. Don't set the final session ID yet, but require a call to an MFA endpoint to complete the login.
-    const tempSessionId = uuidv4(); // Generate a temporary session ID
-    setUserTempSession(tempSessionId, user); // You might want to mark this session as incomplete/pending MFA
+    const tempSessionId = uuidv4();
+    setUserTempSession(tempSessionId, user); 
     console.log("User authenticated with username+password, but still requires MFA to log in:", user.email);
     res.cookie("tempSessionId", tempSessionId, { httpOnly: true });
     return res.status(200).json({ message: "MFA required", mfaRequired: true });

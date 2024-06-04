@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 const Mfa = () => {
     const navigate = useNavigate();
 
-    async function handleMfaLogin() {
+    async function mfaLogin() {
         const createOptionsResponse = await fetch("http://localhost:5001/api/passkeys/mfa/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -35,7 +35,7 @@ const Mfa = () => {
     }
 
     return <div className="p-4">
-        <Button onClick={handleMfaLogin}>Login with MFA</Button>
+        <Button onClick={mfaLogin}>Login with MFA</Button>
     </div>;
 };
 

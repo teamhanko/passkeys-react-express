@@ -42,7 +42,6 @@ async function handlePasskeyRegister(req, res) {
 async function handleMfaRegister(req, res) {
   const { user } = req;
   const userID = user.id;
-  // console.log("userIDfromMFA", userID);
 
   if (!userID) {
     return res.status(401).json({ message: "Unauthorized" });
@@ -52,16 +51,13 @@ async function handleMfaRegister(req, res) {
 
   try {
     if (start) {
-      console.log("mfa registration start");
       const createOptions = await startMfaRegistration(userID);
-      console.log("mfa registration start", createOptions);
       return res.json({ createOptions });
     }
     if (finish) {
       await finishMfaRegistration(userID, credential);
       const user = db.users.find((user) => user.id === userID);
       user.mfaEnabled = true;
-      console.log("MfaEnabledForUser", user);
       return res.json({ message: "Registered MFA" });
     }
   } catch (error) {

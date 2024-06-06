@@ -26,7 +26,6 @@ async function startMfaRegistration(userID) {
   const createOptions = await passkeyApi
     .user(user.id)
     .mfa.registration.initialize({
-      userId: user.id,
       username: user.email || "",
     });
 
@@ -49,9 +48,7 @@ async function startServerPasskeyLogin() {
 
 async function startMfaLogin(userID) {
   const user = db.users.find((user) => user.id === userID);
-  const options = await passkeyApi.user(user.id).mfa.login.initialize({
-    userId: user.id,
-  });
+  const options = await passkeyApi.user(user.id).mfa.login.initialize();
   return options;
 }
 
